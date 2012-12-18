@@ -43,30 +43,43 @@ class TrainStations
     puts "\n"
   end
 
-  def exploreTripsMaxStops(node, destination, count, trips)
-    if count === 0
-      return trips
-    elsif node == destination 
-      trips += 1
-    end
-    @routes[node].each do |n, v|
-      return exploreTripsMaxStops(n, destination, count-1, trips)
-    end
-  end
-
-  def countTripsUntilMax(origin, destination, maxStops)
-    #TODO validar nulls, etc
+  def exploreTripsMaxStops(node, destination, count)
     trips = 0
-    puts " Origin: ", origin, @routes[origin]
-    puts " Destination: ", destination, @routes[destination]
-
-    @routes[origin].each do |node, value|
-      trips += exploreTripsMaxStops(node, destination, maxStops, 0)
+    if count > 0
+      if node == destination 
+        trips += 1
+      end
+      @routes[node].each do |n, v|
+        trips += exploreTripsMaxStops(n, destination, count-1)
+      end
     end
-    puts "Final: "
-    puts trips
-    return trips
+    trips
   end
+
+  # def exploreTripsMaxStops(node, destination, count, trips)
+  #   if count === 0
+  #     return trips
+  #   elsif node == destination 
+  #     trips += 1
+  #   end
+  #   @routes[node].each do |n, v|
+  #     return exploreTripsMaxStops(n, destination, count-1, trips)
+  #   end
+  # end
+
+  # def countTripsUntilMax(origin, destination, maxStops)
+  #   #TODO validar nulls, etc
+  #   trips = 0
+  #   puts " Origin: ", origin, @routes[origin]
+  #   puts " Destination: ", destination, @routes[destination]
+
+  #   @routes[origin].each do |node, value|
+  #     trips += exploreTripsMaxStops(node, destination, maxStops, 0)
+  #   end
+  #   puts "Final: "
+  #   puts trips
+  #   return trips
+  # end
 
 
   def countTripsInStop(node, destination, count)
@@ -93,11 +106,11 @@ stations = TrainStations.new
 ###   TESTS  ###
 puts "\n"
 
-# stations.calcDist ["A","B","C"]           #1. The distance of the route A­B­C.
-# stations.calcDist ["A","D"]               #2. The distance of the route A­D.
-# stations.calcDist ["A","D","C"]           #3. The distance of the route A­D­C.
-# stations.calcDist ["A","E", "B","C", "D"] #4. The distance of the route A­E­B­C­D. 
-# stations.calcDist ["A","E","D"]           #5. The distance of the route A­E­D.
+puts stations.calcDist ["A","B","C"]           #1. The distance of the route A­B­C.
+puts stations.calcDist ["A","D"]               #2. The distance of the route A­D.
+purs stations.calcDist ["A","D","C"]           #3. The distance of the route A­D­C.
+puts stations.calcDist ["A","E", "B","C", "D"] #4. The distance of the route A­E­B­C­D. 
+puts stations.calcDist ["A","E","D"]           #5. The distance of the route A­E­D.
 
-#stations.countTripsUntilMax "C", "C", 3  #6.
+puts stations.exploreTripsMaxStops "C", "C", 3  #6.
 puts stations.countTripsInStop("A", "C", 4)  #7.
