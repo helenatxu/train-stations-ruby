@@ -43,29 +43,68 @@ class TrainStations
     puts "\n"
   end
 
-  def countTrips (origin, destination, maxStops)
-    trips = 0
-    puts @routes[origin]
-    @routes[origin].each do |node, value|
-      puts node
-      trips = isThereTrip(node, destination, maxStops, 0)
-    end
-    puts "Final: "
-    puts trips
-    return trips
-  end
-
-  def isThereTrip (node, destination, count, trips)
-    puts trips
+  def exploreTripsMaxStops(node, destination, count, trips)
     if count === 0
       return trips
     elsif node == destination 
       trips += 1
     end
     @routes[node].each do |n, v|
-      isThereTrip(n, destination, count-1, trips)
+      return exploreTripsMaxStops(n, destination, count-1, trips)
     end
   end
+
+  def countTripsWithMax(origin, destination, maxStops)
+    #TODO validar nulls, etc
+    trips = 0
+    puts " Origin: ", origin, @routes[origin]
+    puts " Destination: ", destination, @routes[destination]
+
+    @routes[origin].each do |node, value|
+      trips += exploreTripsMaxStops(node, destination, maxStops, 0)
+    end
+    puts "Final: "
+    puts trips
+    return trips
+  end
+
+
+
+
+
+
+  def exploreTripsWithStops(node, destination, count, trips)
+    puts " Nodo", node, " Count", count, "\n"
+    if count === 0      
+      if node == destination 
+        trips += 1
+        puts "Anado 1 trip. Total: ", trips
+      end
+      puts "---\n\n"
+      return trips
+    end
+    @routes[node].each do |n, v|
+      return exploreTripsWithStops(n, destination, count-1, trips)
+    end
+  end
+
+  
+
+  def countTrips(origin, destination, stops)
+    trips = 0
+    puts " Origin: ", origin, @routes[origin]
+    puts " Destination: ", destination, "\n\n"
+
+    @routes[origin].each do |node, value|
+      puts "Empieza el bucle en otro nodo. --- \n"
+      trips += exploreTripsWithStops(node, destination, stops-1, 0)
+    end
+    puts "Final: "
+    puts trips
+    return trips
+  end
+
+
 end
 
 
@@ -81,4 +120,5 @@ puts "\n"
 # stations.calcDist ["A","E", "B","C", "D"] #4. The distance of the route A­E­B­C­D. 
 # stations.calcDist ["A","E","D"]           #5. The distance of the route A­E­D.
 
-stations.countTrips "C", "C", 3
+#stations.countTripsWithMax "C", "C", 3  #6.
+stations.countTrips "A", "C", 4  #7.
