@@ -1,21 +1,3 @@
-class TrainStations
-
-  def initialize
-    input = gets.split(",").map { |route| route.strip }
-    @routes = {}
-    input.each do |i| 
-      if @routes[i[0]].nil?
-        @routes[i[0]] = {}
-      end
-      @routes[i[0]][i[1]] = i[2..-1].to_i  
-      # so it will take all digits in case the route length > 9
-    end
-    puts @routes
-  end
-
-
-end
-
 class Edge
   attr_accessor :src, :dst, :length
   
@@ -42,10 +24,9 @@ class Graph < Array
     end
     @edges.push Edge.new(src, dst, length)
   end
-  
-  def connect_mutually(vertex1, vertex2, length = 1)
+
+  def connect_directed(vertex1, vertex2, length)
     self.connect vertex1, vertex2, length
-    self.connect vertex2, vertex1, length
   end
 
   def neighbors(vertex)
@@ -89,7 +70,6 @@ class Graph < Array
         if distances[vertex].nil? or alt < distances[vertex]
           distances[vertex] = alt
           previouses[vertices] = nearest_vertex
-          # decrease-key v in Q # ???
         end
       end
       vertices.delete nearest_vertex
@@ -102,22 +82,22 @@ class Graph < Array
   end
 end
 
-graph = Graph.new
-(1..6).each {|node| graph.push node }
-graph.connect_mutually 1, 2, 7
-graph.connect_mutually 1, 3, 9
-graph.connect_mutually 1, 6, 14
-graph.connect_mutually 2, 3, 10
-graph.connect_mutually 2, 4, 15
-graph.connect_mutually 3, 4, 11
-graph.connect_mutually 3, 6, 2
-graph.connect_mutually 4, 5, 6
-graph.connect_mutually 5, 6, 9
 
-p graph
-p graph.length_between(2, 1)
-p graph.neighbors(1)
-p graph.dijkstra(1, 5)
+stations = Graph.new
+
+("A".."E").each {|node| stations.push node }
+
+input = gets.split(",").map { |route| route.strip }
+input.each do |i|
+  stations.connect_directed i[0], i[1], i[2..-1].to_i
+  puts i[0], i[1], i[2..-1].to_i, "----\n\n"
+end
+
+
+p stations
+p stations.length_between("A", "B")
+p stations.neighbors("A")
+p stations.dijkstra("A", "C")
 
 
 
