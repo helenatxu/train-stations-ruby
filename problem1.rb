@@ -54,7 +54,7 @@ class TrainStations
     end
   end
 
-  def countTripsWithMax(origin, destination, maxStops)
+  def countTripsUntilMax(origin, destination, maxStops)
     #TODO validar nulls, etc
     trips = 0
     puts " Origin: ", origin, @routes[origin]
@@ -69,42 +69,19 @@ class TrainStations
   end
 
 
-
-
-
-
-  def exploreTripsWithStops(node, destination, count)
-    puts " Nodo", node, " Count", count, "\n"
-
+  def countTripsInStop(node, destination, count)
     if count === 0      
       if node == destination 
         return 1
       end
-      puts "---\n\n"
       return 0
     end
     trips = 0
     @routes[node].each do |n, v|
-      trips += exploreTripsWithStops(n, destination, count-1)
+      trips += countTripsInStop(n, destination, count-1)
     end
     trips
   end
-
-
-
-  # def countTrips(origin, destination, stops)
-  #   trips = 0
-  #   puts " Origin: ", origin, @routes[origin]
-  #   puts " Destination: ", destination, "\n\n"
-
-  #   @routes[origin].each do |node, value|
-  #     puts "Empieza el bucle en otro nodo. --- \n"
-  #     trips += exploreTripsWithStops(node, destination, stops-1)
-  #   end
-  #   puts "Final: "
-  #   puts trips
-  #   return trips
-  # end
 
 
 end
@@ -122,5 +99,5 @@ puts "\n"
 # stations.calcDist ["A","E", "B","C", "D"] #4. The distance of the route A­E­B­C­D. 
 # stations.calcDist ["A","E","D"]           #5. The distance of the route A­E­D.
 
-#stations.countTripsWithMax "C", "C", 3  #6.
-puts stations.exploreTripsWithStops("A", "C", 4)  #7.
+#stations.countTripsUntilMax "C", "C", 3  #6.
+puts stations.countTripsInStop("A", "C", 4)  #7.
