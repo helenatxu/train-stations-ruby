@@ -108,7 +108,7 @@ puts "\n"
 
 puts stations.calcDist ["A","B","C"]           #1. The distance of the route A­B­C.
 puts stations.calcDist ["A","D"]               #2. The distance of the route A­D.
-purs stations.calcDist ["A","D","C"]           #3. The distance of the route A­D­C.
+puts stations.calcDist ["A","D","C"]           #3. The distance of the route A­D­C.
 puts stations.calcDist ["A","E", "B","C", "D"] #4. The distance of the route A­E­B­C­D. 
 puts stations.calcDist ["A","E","D"]           #5. The distance of the route A­E­D.
 
