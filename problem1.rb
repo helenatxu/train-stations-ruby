@@ -73,36 +73,38 @@ class TrainStations
 
 
 
-  def exploreTripsWithStops(node, destination, count, trips)
+  def exploreTripsWithStops(node, destination, count)
     puts " Nodo", node, " Count", count, "\n"
+
     if count === 0      
       if node == destination 
-        trips += 1
-        puts "Anado 1 trip. Total: ", trips
+        return 1
       end
       puts "---\n\n"
-      return trips
+      return 0
     end
-    @routes[node].each do |n, v|
-      return exploreTripsWithStops(n, destination, count-1, trips)
-    end
-  end
-
-  
-
-  def countTrips(origin, destination, stops)
     trips = 0
-    puts " Origin: ", origin, @routes[origin]
-    puts " Destination: ", destination, "\n\n"
-
-    @routes[origin].each do |node, value|
-      puts "Empieza el bucle en otro nodo. --- \n"
-      trips += exploreTripsWithStops(node, destination, stops-1, 0)
+    @routes[node].each do |n, v|
+      trips += exploreTripsWithStops(n, destination, count-1)
     end
-    puts "Final: "
-    puts trips
-    return trips
+    trips
   end
+
+
+
+  # def countTrips(origin, destination, stops)
+  #   trips = 0
+  #   puts " Origin: ", origin, @routes[origin]
+  #   puts " Destination: ", destination, "\n\n"
+
+  #   @routes[origin].each do |node, value|
+  #     puts "Empieza el bucle en otro nodo. --- \n"
+  #     trips += exploreTripsWithStops(node, destination, stops-1)
+  #   end
+  #   puts "Final: "
+  #   puts trips
+  #   return trips
+  # end
 
 
 end
@@ -121,4 +123,4 @@ puts "\n"
 # stations.calcDist ["A","E","D"]           #5. The distance of the route A­E­D.
 
 #stations.countTripsWithMax "C", "C", 3  #6.
-stations.countTrips "A", "C", 4  #7.
+puts stations.exploreTripsWithStops("A", "C", 4)  #7.
