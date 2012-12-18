@@ -18,18 +18,18 @@ class TrainStations
       return nil
     end
 
-    puts x 
-    puts " <--- X"
-    puts y
-    puts " <--- Y"
+    #puts x 
+    #puts " <--- X"
+    #puts y
+    #puts " <--- Y"
 
     if !@routes.has_key?(x)
       return nil
     elsif @routes[x][y].nil?
       return nil
     else
-      puts @routes[x][y]
-      puts " <--- @routes[x][y] \n"
+    #  puts @routes[x][y]
+    #  puts " <--- @routes[x][y] \n"
       return @routes[x][y]
     end
   end
@@ -40,12 +40,12 @@ class TrainStations
     total = 0 
     dist = 0
     #TODO mejorar con yield
-    puts a
-    puts a.length
-    puts "--------"
+    #puts a
+    #puts a.length
+    #puts "--------"
     while i < a.length-1
-      puts i   
-      puts " <--- i"
+      #puts i   
+      #puts " <--- i"
 
       dist = distance a[i], a[i+1]
       i+=1
@@ -55,9 +55,9 @@ class TrainStations
         total += dist
       end      
     end
-    puts "Total: " + total.to_s
+    #puts "Total: " + total.to_s
     return total
-    
+    puts "\n"
   end
 
 
@@ -73,6 +73,12 @@ puts "\n"
 # puts stations.calc_dist ["A","C"]
 # puts stations.calc_dist ["A","Z"]
 # puts stations.calc_dist [nil,"B","C"]
-puts stations.calc_dist ["1","B","C"]
-puts stations.calc_dist ["A","B","C","D","E"]
-puts stations.calc_dist ["A","B","C","D","C"]
+# puts stations.calc_dist ["1","B","C"]
+# puts stations.calc_dist ["A","B","C","D","E"]
+# puts stations.calc_dist ["A","B","C","D","C"]
+
+puts stations.calc_dist ["A","B","C"]           #1. The distance of the route A­B­C.
+puts stations.calc_dist ["A","D"]               #2. The distance of the route A­D.
+puts stations.calc_dist ["A","D","C"]           #3. The distance of the route A­D­C.
+puts stations.calc_dist ["A","E", "B","C", "D"] #4. The distance of the route A­E­B­C­D. 
+puts stations.calc_dist ["A","E","D"]           #5. The distance of the route A­E­D.
