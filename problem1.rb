@@ -56,32 +56,6 @@ class TrainStations
     trips
   end
 
-  # def exploreTripsMaxStops(node, destination, count, trips)
-  #   if count === 0
-  #     return trips
-  #   elsif node == destination 
-  #     trips += 1
-  #   end
-  #   @routes[node].each do |n, v|
-  #     return exploreTripsMaxStops(n, destination, count-1, trips)
-  #   end
-  # end
-
-  # def countTripsUntilMax(origin, destination, maxStops)
-  #   #TODO validar nulls, etc
-  #   trips = 0
-  #   puts " Origin: ", origin, @routes[origin]
-  #   puts " Destination: ", destination, @routes[destination]
-
-  #   @routes[origin].each do |node, value|
-  #     trips += exploreTripsMaxStops(node, destination, maxStops, 0)
-  #   end
-  #   puts "Final: "
-  #   puts trips
-  #   return trips
-  # end
-
-
   def countTripsInStop(node, destination, count)
     if count === 0      
       if node == destination 
@@ -97,6 +71,48 @@ class TrainStations
   end
 
 
+
+
+
+#   def shortestRoute(x, y)
+#   #función Dijkstra (Grafo G, nodo_salida s)
+  
+#   #Usaremos un vector para guardar las distancias del nodo salida al resto entero distancia[n] 
+#   #Inicializamos el vector con distancias iniciales booleano visto[n] 
+#   #vector de boleanos para controlar los vertices de los que ya tenemos la distancia mínima
+
+#   #para cada w ∈ V[G] hacer
+#   # @routes[node].each do |n, v|
+#   #     trips += countTripsInStop(n, destination, count-1)
+#   #   end
+#   #    #Si (no existe arista entre s y w) entonces
+#   #    #    distancia[w] = Infinito #puedes marcar la casilla con un -1 por ejemplo
+#   #    if
+#   #        distancia[w] = peso (s, w)
+#   #    end 
+#   # end
+#   distance[x] = 0
+#   visto[x] = cierto
+#   #n es el número de vertices que tiene el Grafo
+#   mientras que (no_esten_vistos_todos) hacer 
+#      vertice = coger_el_minimo_del_vector distancia y que no este visto;
+#      visto[vertice] = cierto;
+#      para cada w ∈ sucesores (G, vertice) hacer
+#          si distancia[w]>distancia[vertice]+peso (vertice, w) entonces
+#             distancia[w] = distancia[vertice]+peso (vertice, w)
+#          fin si
+#      fin para 
+#   fin mientras
+# fin función    
+#   end
+
+
+
+
+
+
+
+
 end
 
 
@@ -106,11 +122,12 @@ stations = TrainStations.new
 ###   TESTS  ###
 puts "\n"
 
-puts stations.calcDist ["A","B","C"]           #1. The distance of the route A­B­C.
-puts stations.calcDist ["A","D"]               #2. The distance of the route A­D.
-puts stations.calcDist ["A","D","C"]           #3. The distance of the route A­D­C.
-puts stations.calcDist ["A","E", "B","C", "D"] #4. The distance of the route A­E­B­C­D. 
-puts stations.calcDist ["A","E","D"]           #5. The distance of the route A­E­D.
+# puts stations.calcDist ["A","B","C"]           #1. The distance of the route A­B­C.
+# puts stations.calcDist ["A","D"]               #2. The distance of the route A­D.
+# puts stations.calcDist ["A","D","C"]           #3. The distance of the route A­D­C.
+# puts stations.calcDist ["A","E", "B","C", "D"] #4. The distance of the route A­E­B­C­D. 
+# puts stations.calcDist ["A","E","D"]           #5. The distance of the route A­E­D.
+# puts stations.exploreTripsMaxStops "C", "C", 3  #6.
+# puts stations.countTripsInStop("A", "C", 4)  #7.
 
-puts stations.exploreTripsMaxStops "C", "C", 3  #6.
-puts stations.countTripsInStop("A", "C", 4)  #7.
+puts stations.shortestRoute("A", "C")  #8.
