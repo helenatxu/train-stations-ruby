@@ -77,7 +77,7 @@ end
 class Edge
   attr_accessor :src, :dst, :length
 
-  def initialize(src, dst, length = 1)
+  def initialize(src, dst, length)
     @src = src
     @dst = dst
     @length = length
@@ -91,7 +91,7 @@ class Graph < Array
     @edges = []
   end
 
-  def connect(src, dst, length = 1)
+  def connect(src, dst, length)
     unless self.include?(src)
       raise ArgumentException, "No such vertex: #{src}"
     end
@@ -115,7 +115,7 @@ class Graph < Array
 
   def length_between(src, dst)
     @edges.each do |edge|
-      if edge.src == src and edge.dst == dst and edge.length > 0
+      if edge.src == src and edge.dst == dst
         return edge.length 
       end
       nil
@@ -131,18 +131,18 @@ class Graph < Array
     end
     distances[src] = 0
     vertices = self.clone
-    until vertices.empty?
+    until vertices.empty? #### ---> por alguna razon, si scr==dst no encuentra otros nodos
       nearest_vertex = vertices.inject do |a, b|
         puts "=----", "a - ", a, "b - ", b, "distances[a]", distances[a], "distances[b]", distances[b], "\n--\n"
         next b unless distances[a]
         next a unless distances[b]
-        next a if distances[a] < distances[b]
+        next a if distances[a]<distances[b] && distances[a]>0
         b
       end  
       puts "nearest_vertex: ", nearest_vertex, "----"
       break unless distances[nearest_vertex] # Infinity
       if dst and nearest_vertex == dst
-        puts "distances: ", distances
+        puts "dest: ", dst, "distances: ", distances
         return distances[dst]
       end
       neighbors = vertices.neighbors(nearest_vertex)
@@ -190,9 +190,25 @@ input.each do |i|
   #puts i[0], i[1], i[2..-1].to_i, "----\n\n"
 end
 
-puts "Output #", stations.dijkstra("A", "C") #8. The length of the shortest route (in terms of distance to travel) from A to C.
-puts stations.dijkstra("B", "B") #9. The length of the shortest route (in terms of distance to travel) from B to B.
+#puts "Output #", stations.dijkstra("A", "C") #8. The length of the shortest route (in terms of distance to travel) from A to C.
+#puts stations.dijkstra("B") #9. The length of the shortest route (in terms of distance to travel) from B to B.
 
+dest = "B"
+shortRoute = stations.dijkstra(dest)
+
+shortRoute.each do |n, v| 
+      #puts "*_________*", n, v, "*_________*"
+      if not v.nil?
+        shortRoute[n] += stations.dijkstra(n, dest)
+      end
+      # if shortRoute[i[0]].nil?
+      #   shortRoute[i[0]] = {}
+      # end
+      # shortRoute[i[0]][i[1]] = i[2..-1].to_i  
+      puts "*******", shortRoute
+      #puts shortRoute.values.sort_by{|v| v.last}.first
+      si el key es igual a dest o valor igual a nil ejecuto el metodo que elimina eso del hash
+    end
 # p stations
 # p stations.length_between("A", "B")
 # p stations.neighbors("A")
