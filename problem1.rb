@@ -1,7 +1,6 @@
 class TrainStations
-
-  def initialize
-    input = gets.split(",").map { |route| route.strip }
+  def initialize(input)
+    #input = gets.split(",").map { |route| route.strip }
     @routes = {}
     input.each do |i| 
       if @routes[i[0]].nil?
@@ -70,54 +69,105 @@ class TrainStations
     trips
   end
 
+end
 
 
 
 
-#   def shortestRoute(x, y)
-#   #función Dijkstra (Grafo G, nodo_salida s)
-  
-#   #Usaremos un vector para guardar las distancias del nodo salida al resto entero distancia[n] 
-#   #Inicializamos el vector con distancias iniciales booleano visto[n] 
-#   #vector de boleanos para controlar los vertices de los que ya tenemos la distancia mínima
+class Edge
+  attr_accessor :src, :dst, :length
 
-#   #para cada w ∈ V[G] hacer
-#   # @routes[node].each do |n, v|
-#   #     trips += countTripsInStop(n, destination, count-1)
-#   #   end
-#   #    #Si (no existe arista entre s y w) entonces
-#   #    #    distancia[w] = Infinito #puedes marcar la casilla con un -1 por ejemplo
-#   #    if
-#   #        distancia[w] = peso (s, w)
-#   #    end 
-#   # end
-#   distance[x] = 0
-#   visto[x] = cierto
-#   #n es el número de vertices que tiene el Grafo
-#   mientras que (no_esten_vistos_todos) hacer 
-#      vertice = coger_el_minimo_del_vector distancia y que no este visto;
-#      visto[vertice] = cierto;
-#      para cada w ∈ sucesores (G, vertice) hacer
-#          si distancia[w]>distancia[vertice]+peso (vertice, w) entonces
-#             distancia[w] = distancia[vertice]+peso (vertice, w)
-#          fin si
-#      fin para 
-#   fin mientras
-# fin función    
-#   end
+  def initialize(src, dst, length = 1)
+    @src = src
+    @dst = dst
+    @length = length
+  end
+end
 
+class Graph < Array
+  attr_reader :edges
 
+  def initialize
+    @edges = []
+  end
 
+  def connect(src, dst, length = 1)
+    unless self.include?(src)
+      raise ArgumentException, "No such vertex: #{src}"
+    end
+    unless self.include?(dst)
+      raise ArgumentException, "No such vertex: #{dst}"
+    end
+    @edges.push Edge.new(src, dst, length)
+  end
 
+  def connect_directed(vertex1, vertex2, length)
+    self.connect vertex1, vertex2, length
+  end
 
+  def neighbors(vertex)
+    neighbors = []
+    @edges.each do |edge|
+      neighbors.push edge.dst if edge.src == vertex
+    end
+    return neighbors.uniq
+  end
 
+  def length_between(src, dst)
+    @edges.each do |edge|
+      if edge.src == src and edge.dst == dst and edge.length > 0
+        return edge.length 
+      end
+      nil
+    end
+  end
 
+  def dijkstra(src, dst = nil)
+    distances = {}
+    previouses = {}
+    self.each do |vertex|
+      distances[vertex] = nil # Infinity
+      previouses[vertex] = nil
+    end
+    distances[src] = 0
+    vertices = self.clone
+    until vertices.empty?
+      nearest_vertex = vertices.inject do |a, b|
+        puts "=----", "a - ", a, "b - ", b, "distances[a]", distances[a], "distances[b]", distances[b], "\n--\n"
+        next b unless distances[a]
+        next a unless distances[b]
+        next a if distances[a] < distances[b]
+        b
+      end  
+      puts "nearest_vertex: ", nearest_vertex, "----"
+      break unless distances[nearest_vertex] # Infinity
+      if dst and nearest_vertex == dst
+        puts "distances: ", distances
+        return distances[dst]
+      end
+      neighbors = vertices.neighbors(nearest_vertex)
+      neighbors.each do |vertex|
+        alt = distances[nearest_vertex] + vertices.length_between(nearest_vertex, vertex)
+        if distances[vertex].nil? or alt < distances[vertex]
+          distances[vertex] = alt
+          previouses[vertices] = nearest_vertex
+        end
+      end
+      vertices.delete nearest_vertex
+    end
+    if dst
+      return nil
+    else
+      return distances
+    end
+  end
 
 end
 
 
-stations = TrainStations.new
+input = gets.split(",").map { |route| route.strip }
 
+stations = TrainStations.new(input)
 
 ###   TESTS  ###
 puts "\n"
@@ -127,7 +177,24 @@ puts "\n"
 # puts stations.calcDist ["A","D","C"]           #3. The distance of the route A­D­C.
 # puts stations.calcDist ["A","E", "B","C", "D"] #4. The distance of the route A­E­B­C­D. 
 # puts stations.calcDist ["A","E","D"]           #5. The distance of the route A­E­D.
-# puts stations.exploreTripsMaxStops "C", "C", 3  #6.
-# puts stations.countTripsInStop("A", "C", 4)  #7.
+# puts stations.exploreTripsMaxStops "C", "C", 3 #6.
+# puts stations.countTripsInStop("A", "C", 4)    #7.
 
-puts stations.shortestRoute("A", "C")  #8.
+
+stations = Graph.new
+
+("A".."E").each {|node| stations.push node }
+#input = gets.split(",").map { |route| route.strip }
+input.each do |i|
+  stations.connect_directed i[0], i[1], i[2..-1].to_i
+  #puts i[0], i[1], i[2..-1].to_i, "----\n\n"
+end
+
+puts "Output #", stations.dijkstra("A", "C") #8. The length of the shortest route (in terms of distance to travel) from A to C.
+puts stations.dijkstra("B", "B") #9. The length of the shortest route (in terms of distance to travel) from B to B.
+
+# p stations
+# p stations.length_between("A", "B")
+# p stations.neighbors("A")
+# p stations.dijkstra("A", "C")
+

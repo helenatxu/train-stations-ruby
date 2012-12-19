@@ -98,7 +98,7 @@ p stations
 p stations.length_between("A", "B")
 p stations.neighbors("A")
 p stations.dijkstra("A", "C")
-
+p stations.dijkstra("B", "B")
 
 
 #stations = TrainStations.new
