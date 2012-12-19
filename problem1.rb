@@ -133,16 +133,14 @@ class Graph < Array
     vertices = self.clone
     until vertices.empty? #### ---> por alguna razon, si scr==dst no encuentra otros nodos
       nearest_vertex = vertices.inject do |a, b|
-        puts "=----", "a - ", a, "b - ", b, "distances[a]", distances[a], "distances[b]", distances[b], "\n--\n"
         next b unless distances[a]
         next a unless distances[b]
         next a if distances[a]<distances[b] && distances[a]>0
         b
       end  
-      puts "nearest_vertex: ", nearest_vertex, "----"
       break unless distances[nearest_vertex] # Infinity
       if dst and nearest_vertex == dst
-        puts "dest: ", dst, "distances: ", distances
+
         return distances[dst]
       end
       neighbors = vertices.neighbors(nearest_vertex)
@@ -163,19 +161,17 @@ class Graph < Array
   end
 
   def shortestRouteToSameStation(origin)
-  shortRoute = stations.dijkstra(origin)
-
-  shortRoute.each do |n, v| 
-    if not v.nil?
-      shortRoute[n] += stations.dijkstra(n, origin)
-    end
-    puts "*******", shortRoute
-    if n == origin || v.nil?
-      shortRoute.delete(n)
+    shortRoute = dijkstra(origin)
+    shortRoute.each do |n, v| 
+      if not v.nil?
+        shortRoute[n] += dijkstra(n, origin)
+      end
+      if n == origin || v.nil?
+        shortRoute.delete(n)
+      end
     end
     return shortRoute.values.min
   end
-end
 
 end
 
@@ -199,10 +195,8 @@ puts "\n"
 stations = Graph.new
 
 ("A".."E").each {|node| stations.push node }
-#input = gets.split(",").map { |route| route.strip }
 input.each do |i|
   stations.connect_directed i[0], i[1], i[2..-1].to_i
-  #puts i[0], i[1], i[2..-1].to_i, "----\n\n"
 end
 
 puts "Output #8", stations.dijkstra("A", "C") #8. The length of the shortest route (in terms of distance to travel) from A to C.
