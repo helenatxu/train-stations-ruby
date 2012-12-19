@@ -197,17 +197,15 @@ dest = "B"
 shortRoute = stations.dijkstra(dest)
 
 shortRoute.each do |n, v| 
-      #puts "*_________*", n, v, "*_________*"
       if not v.nil?
         shortRoute[n] += stations.dijkstra(n, dest)
       end
-      # if shortRoute[i[0]].nil?
-      #   shortRoute[i[0]] = {}
-      # end
-      # shortRoute[i[0]][i[1]] = i[2..-1].to_i  
       puts "*******", shortRoute
-      #puts shortRoute.values.sort_by{|v| v.last}.first
-      si el key es igual a dest o valor igual a nil ejecuto el metodo que elimina eso del hash
+      if n == dest || v.nil?
+        shortRoute.delete(n)
+      end
+      puts shortRoute.values.min
+
     end
 # p stations
 # p stations.length_between("A", "B")
