@@ -162,6 +162,21 @@ class Graph < Array
     end
   end
 
+  def shortestRouteToSameStation(origin)
+  shortRoute = stations.dijkstra(origin)
+
+  shortRoute.each do |n, v| 
+    if not v.nil?
+      shortRoute[n] += stations.dijkstra(n, origin)
+    end
+    puts "*******", shortRoute
+    if n == origin || v.nil?
+      shortRoute.delete(n)
+    end
+    return shortRoute.values.min
+  end
+end
+
 end
 
 
@@ -190,23 +205,10 @@ input.each do |i|
   #puts i[0], i[1], i[2..-1].to_i, "----\n\n"
 end
 
-#puts "Output #", stations.dijkstra("A", "C") #8. The length of the shortest route (in terms of distance to travel) from A to C.
-#puts stations.dijkstra("B") #9. The length of the shortest route (in terms of distance to travel) from B to B.
+puts "Output #8", stations.dijkstra("A", "C") #8. The length of the shortest route (in terms of distance to travel) from A to C.
+puts "Output #9", stations.shortestRouteToSameStation("B") #9. The length of the shortest route (in terms of distance to travel) from B to B.
 
-dest = "B"
-shortRoute = stations.dijkstra(dest)
 
-shortRoute.each do |n, v| 
-      if not v.nil?
-        shortRoute[n] += stations.dijkstra(n, dest)
-      end
-      puts "*******", shortRoute
-      if n == dest || v.nil?
-        shortRoute.delete(n)
-      end
-      puts shortRoute.values.min
-
-    end
 # p stations
 # p stations.length_between("A", "B")
 # p stations.neighbors("A")
