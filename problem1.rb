@@ -12,7 +12,7 @@ class TrainStations
     puts @routes
   end
 
-  def distance (x,y)
+  def distance(x,y)
     if x.nil? || y.nil? 
       return nil
     end
@@ -25,7 +25,7 @@ class TrainStations
     end
   end
 
-  def calcDist (a)
+  def calcDist(a)
     i = 0 
     total = 0 
     dist = 0
@@ -50,6 +50,18 @@ class TrainStations
       end
       @routes[node].each do |n, v|
         trips += exploreTripsMaxStops(n, destination, count-1)
+      end
+    end
+    trips
+  end
+
+  def exploreTripsMaxLength(node, destination, count)
+    trips = 0
+    @routes[node].each do |n, v|
+      puts "-------", n, v,  count, "-------"
+      if v < count
+        trips += 1 if n == destination
+        trips += exploreTripsMaxLength(n, destination, count-v)
       end
     end
     trips
@@ -191,6 +203,7 @@ puts "\n"
 # puts stations.exploreTripsMaxStops "C", "C", 3 #6.
 # puts stations.countTripsInStop("A", "C", 4)    #7.
 
+puts "Output #10", stations.exploreTripsMaxLength("C", "C", 30)
 
 stations = Graph.new
 
@@ -199,8 +212,8 @@ input.each do |i|
   stations.connect_directed i[0], i[1], i[2..-1].to_i
 end
 
-puts "Output #8", stations.dijkstra("A", "C") #8. The length of the shortest route (in terms of distance to travel) from A to C.
-puts "Output #9", stations.shortestRouteToSameStation("B") #9. The length of the shortest route (in terms of distance to travel) from B to B.
+#puts "Output #8", stations.dijkstra("A", "C") #8. The length of the shortest route (in terms of distance to travel) from A to C.
+#puts "Output #9", stations.shortestRouteToSameStation("B") #9. The length of the shortest route (in terms of distance to travel) from B to B.
 
 
 # p stations
