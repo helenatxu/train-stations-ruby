@@ -81,6 +81,41 @@ class TrainStations
     trips
   end
 
+  def dijkstra(src, dst = nil)
+    distances = {}
+    @routes.keys.each do |n|
+       distances[n] = nil # Infinity
+     end
+     distances[src] = 0
+     puts "----->", distances, "----->"
+
+    #until vertices.empty? 
+    nearest_vertex = nil
+    @routes[src].each do |n, v|
+      if nearest_vertex.nil? || v < @routes[src][nearest_vertex]
+        nearest_vertex = n
+      end
+      distances[n] = v
+    end
+
+    puts nearest_vertex
+    distances[nearest_vertex] = @routes[src][nearest_vertex]
+
+    @routes[nearest_vertex].each do |node, value|
+      puts @routes[nearest_vertex]
+
+      if distances[node].nil? || distances[node] > (distances[nearest_vertex] + value)
+        distances[node] = distances[nearest_vertex] + value
+      end
+    end
+    puts "DISTANCES: ", distances
+       return distances[dst]
+  end
+
+  def neighbors(vertex)
+    return @routes[vertex]
+  end
+
 end
 
 
@@ -193,7 +228,12 @@ input = gets.split(",").map { |route| route.strip }
 stations = TrainStations.new(input)
 
 ###   TESTS  ###
-puts "\n"
+puts "\n\n\n"
+
+
+puts "Output #8", stations.dijkstra("A", "C"), "\n\n\n"
+
+
 
 # puts stations.calcDist ["A","B","C"]           #1. The distance of the route A­B­C.
 # puts stations.calcDist ["A","D"]               #2. The distance of the route A­D.
@@ -203,14 +243,16 @@ puts "\n"
 # puts stations.exploreTripsMaxStops "C", "C", 3 #6.
 # puts stations.countTripsInStop("A", "C", 4)    #7.
 
-puts "Output #10", stations.exploreTripsMaxLength("C", "C", 30)
+#puts "Output #10", stations.exploreTripsMaxLength("C", "C", 30)
 
-stations = Graph.new
+#stations = Graph.new
 
-("A".."E").each {|node| stations.push node }
-input.each do |i|
-  stations.connect_directed i[0], i[1], i[2..-1].to_i
-end
+# ("A".."E").each {|node| stations.push node }
+# input.each do |i|
+#   stations.connect_directed i[0], i[1], i[2..-1].to_i
+# end
+
+# puts "Output #8", stations.neighbors("A")
 
 #puts "Output #8", stations.dijkstra("A", "C") #8. The length of the shortest route (in terms of distance to travel) from A to C.
 #puts "Output #9", stations.shortestRouteToSameStation("B") #9. The length of the shortest route (in terms of distance to travel) from B to B.
