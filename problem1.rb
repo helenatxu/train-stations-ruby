@@ -1,14 +1,18 @@
 class TrainStations
-  def initialize(input)
-    #input = gets.split(",").map { |route| route.strip }
+  def initialize()
     @routes = {}
-    input.each do |i| 
-      if @routes[i[0]].nil?
-        @routes[i[0]] = {}
+  end
+
+  def add_route(src, dst, dist)
+      if @routes[src].nil?
+        @routes[src] = {}
       end
-      @routes[i[0]][i[1]] = i[2..-1].to_i  
+      if @routes[dst].nil?
+        @routes[dst] = {}
+      end
+      @routes[src][dst] = dist  
       # so it will take all digits in case the route length > 9
-    end
+
     puts @routes
   end
 
@@ -81,130 +85,41 @@ class TrainStations
     trips
   end
 
-  def dijkstra(src, dst = nil)
+  def dijkstra(src)
     distances = {}
-    @routes.keys.each do |n|
-       distances[n] = nil # Infinity
-     end
-     distances[src] = 0
-     puts "----->", distances, "----->"
-
-    #until vertices.empty? 
-    nearest_vertex = nil
-    @routes[src].each do |n, v|
-      if nearest_vertex.nil? || v < @routes[src][nearest_vertex]
-        nearest_vertex = n
-      end
-      distances[n] = v
+    unvisited = []
+    puts "ROUTES -- ", @routes
+    @routes.keys.each do |node| 
+      distances[node] = Float::INFINITY
+      unvisited << node 
     end
+        puts "\n\n-- Distances: ", distances
 
-    puts nearest_vertex
-    distances[nearest_vertex] = @routes[src][nearest_vertex]
-
-    @routes[nearest_vertex].each do |node, value|
-      puts @routes[nearest_vertex]
-
-      if distances[node].nil? || distances[node] > (distances[nearest_vertex] + value)
-        distances[node] = distances[nearest_vertex] + value
-      end
-    end
-    puts "DISTANCES: ", distances
-       return distances[dst]
-  end
-
-  def neighbors(vertex)
-    return @routes[vertex]
-  end
-
-end
-
-
-
-
-class Edge
-  attr_accessor :src, :dst, :length
-
-  def initialize(src, dst, length)
-    @src = src
-    @dst = dst
-    @length = length
-  end
-end
-
-class Graph < Array
-  attr_reader :edges
-
-  def initialize
-    @edges = []
-  end
-
-  def connect(src, dst, length)
-    unless self.include?(src)
-      raise ArgumentException, "No such vertex: #{src}"
-    end
-    unless self.include?(dst)
-      raise ArgumentException, "No such vertex: #{dst}"
-    end
-    @edges.push Edge.new(src, dst, length)
-  end
-
-  def connect_directed(vertex1, vertex2, length)
-    self.connect vertex1, vertex2, length
-  end
-
-  def neighbors(vertex)
-    neighbors = []
-    @edges.each do |edge|
-      neighbors.push edge.dst if edge.src == vertex
-    end
-    return neighbors.uniq
-  end
-
-  def length_between(src, dst)
-    @edges.each do |edge|
-      if edge.src == src and edge.dst == dst
-        return edge.length 
-      end
-      nil
-    end
-  end
-
-  def dijkstra(src, dst = nil)
-    distances = {}
-    previouses = {}
-    self.each do |vertex|
-      distances[vertex] = nil # Infinity
-      previouses[vertex] = nil
-    end
     distances[src] = 0
-    vertices = self.clone
-    until vertices.empty? #### ---> por alguna razon, si scr==dst no encuentra otros nodos
-      nearest_vertex = vertices.inject do |a, b|
-        next b unless distances[a]
-        next a unless distances[b]
-        next a if distances[a]<distances[b] && distances[a]>0
-        b
-      end  
-      break unless distances[nearest_vertex] # Infinity
-      if dst and nearest_vertex == dst
+    #unvisited.delete(src)
+    current = src
 
-        return distances[dst]
-      end
-      neighbors = vertices.neighbors(nearest_vertex)
-      neighbors.each do |vertex|
-        alt = distances[nearest_vertex] + vertices.length_between(nearest_vertex, vertex)
-        if distances[vertex].nil? or alt < distances[vertex]
-          distances[vertex] = alt
-          previouses[vertices] = nearest_vertex
+    puts "\n\n-- Distances: ", distances
+
+    until unvisited.empty? || distances[current] == Float::INFINITY
+      if @routes[current]
+        @routes[current].each do |node, dist|
+          tentative_dist = distances[current] + dist
+          distances[node] = tentative_dist if tentative_dist < distances[node]
+              puts "\n\n-- Distances: ", distances
+
         end
       end
-      vertices.delete nearest_vertex
+    puts "\n\n-- Distances: ", distances
+
+      unvisited.delete(current)
+      unvisited_distances = distances.select { |node, dist| unvisited.include?(node) }
+      puts "\n\n-- unvisited_distances: ", unvisited_distances
+      puts "\n\n-- unvisited: ", unvisited
+      current = unvisited_distances.min_by { |node, dist| dist }.first
     end
-    if dst
-      return nil
-    else
-      return distances
-    end
+
+    distances
   end
 
   def shortestRouteToSameStation(origin)
@@ -220,18 +135,25 @@ class Graph < Array
     return shortRoute.values.min
   end
 
+
 end
 
 
+stations = TrainStations.new
 input = gets.split(",").map { |route| route.strip }
-
-stations = TrainStations.new(input)
+input.each do |route|
+  src = route[0]
+  dst = route[1]
+  dist = route[2..-1].to_i
+  stations.add_route(src, dst, dist)
+end
 
 ###   TESTS  ###
 puts "\n\n\n"
 
 
-puts "Output #8", stations.dijkstra("A", "C"), "\n\n\n"
+#puts "Output #8", stations.dijkstra("A", "C"), "\n\n\n"
+puts "Output #9", stations.dijkstra("A"), "\n\n\n"
 
 
 
