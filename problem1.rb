@@ -4,19 +4,13 @@ class TrainStations
   end
 
   def add_route(src, dst, dist)
-    if @routes[src].nil?
-      @routes[src] = {}
-    end
-    if @routes[dst].nil?
-      @routes[dst] = {}
-    end
+    @routes[src] = {} if @routes[src].nil?
+    @routes[dst] = {}if @routes[dst].nil?
     @routes[src][dst] = dist 
   end
 
   def distance(x,y)
-    if x.nil? || y.nil? 
-      return nil
-    end
+    return nil if x.nil? || y.nil? 
     if !@routes.has_key?(x)
       return nil
     elsif @routes[x][y].nil?
@@ -45,9 +39,7 @@ class TrainStations
   def exploreTripsMaxStops(node, destination, count)
     trips = 0
     if count > 0
-      if node == destination 
-        trips += 1
-      end
+      trips += 1 if node == destination 
       @routes[node].each do |n, v|
         trips += exploreTripsMaxStops(n, destination, count-1)
       end
@@ -68,9 +60,7 @@ class TrainStations
 
   def countTripsInStop(node, destination, count)
     if count === 0      
-      if node == destination 
-        return 1
-      end
+      return 1 if node == destination 
       return 0
     end
     trips = 0
@@ -87,12 +77,10 @@ class TrainStations
       distances[node] = Float::INFINITY
       unvisited << node 
     end
-
     distances[src] = 0
     current = src
 
     until unvisited.empty? || distances[current] == Float::INFINITY
-
       unvisited_distances = distances.select { |node, dist| unvisited.include?(node) }
       current = unvisited_distances.min_by { |node, dist| dist }.first
 
@@ -105,7 +93,6 @@ class TrainStations
       unvisited.delete(current)
 
       return distances[current] if dst && current == dst
-
     end
 
     distances
@@ -114,12 +101,8 @@ class TrainStations
   def shortestRouteToSameStation(origin)
     shortRoute = dijkstra(origin)
     shortRoute.each do |n, v| 
-      if not v.nil?
-        shortRoute[n] += dijkstra(n, origin)
-      end
-      if n == origin || v.nil?
-        shortRoute.delete(n)
-      end
+      shortRoute[n] += dijkstra(n, origin) unless v.nil?
+      shortRoute.delete(n) if n == origin || v.nil?
     end
     return shortRoute.values.min
   end
