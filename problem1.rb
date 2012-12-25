@@ -4,8 +4,6 @@ class TrainStations
   end
 
   def add_route(src, dst, dist)
-    # FIXME: you can use the ||= operator instead
-    # (http://www.rubyinside.com/what-rubys-double-pipe-or-equals-really-does-5488.html)
     @routes[src] = {} if @routes[src].nil?
     @routes[dst] = {} if @routes[dst].nil?
     @routes[src][dst] = dist 
@@ -18,11 +16,11 @@ class TrainStations
   end
 
 
-  def calc_Dist(path)
+  def calc_dist(path)
     total = 0
     0.upto(path.length-2) do |i|
       dist = distance(path[i], path[i+1])
-      return "NO SUCH ROUTE"  if dist.nil?
+      return "NO SUCH ROUTE" if dist.nil?
       total += dist
     end
     total
@@ -41,14 +39,14 @@ class TrainStations
   end
 
 
-  def count_trips_in_stop(src, dst, stops)
-    if stops === 0      
+  def explore_trips_exact_stops(src, dst, stops)
+    if stops == 0      
       return 1 if src == dst 
       return 0
     end
     trips = 0
     @routes[src].each do |n, v|
-      trips += count_trips_in_stop(n, dst, stops-1)
+      trips += explore_trips_exact_stops(n, dst, stops-1)
     end
     trips
   end
@@ -85,11 +83,11 @@ class TrainStations
 
   def shortest_route_to_same_station(origin)
     shortRoute = dijkstra(origin)
+    shortRoute.delete(origin)
     shortRoute.each do |n, v| 
-      shortRoute[n] += dijkstra(n, origin) unless v.nil?
-      shortRoute.delete(n) if n == origin || v.nil?
+      shortRoute[n] += dijkstra(n, origin)
     end
-    return shortRoute.values.min
+    shortRoute.values.min
   end
 
 
@@ -116,30 +114,24 @@ input.each do |route|
   stations.add_route(src, dst, dist)
 end
 
-###   OUTPUT  ### FIXME: this comment looks ugly ;)
-puts "Output #1: #{stations.calc_Dist(["A", "B", "C"])}"
+# OUTPUT
 #1. The distance of the route A­B­C.
-puts "Output #2: #{stations.calc_Dist(["A", "D"])}"
+puts "Output #1: #{stations.calc_dist(["A", "B", "C"])}"
 #2. The distance of the route A­D.
-puts "Output #3: #{stations.calc_Dist(["A", "D", "C"])}"         
+puts "Output #2: #{stations.calc_dist(["A", "D"])}"
 #3. The distance of the route A­D­C.
-puts "Output #4: #{stations.calc_Dist(["A", "E", "B", "C", "D"])}"
+puts "Output #3: #{stations.calc_dist(["A", "D", "C"])}"         
 #4. The distance of the route A­E­B­C­D. 
-puts "Output #5: #{stations.calc_Dist(["A", "E", "D"])}"      
+puts "Output #4: #{stations.calc_dist(["A", "E", "B", "C", "D"])}"
 #5. The distance of the route A­E­D.
-puts "Output #6: #{stations.explore_trips_max_stops("C", "C", 3)}"
+puts "Output #5: #{stations.calc_dist(["A", "E", "D"])}"      
 #6.
-puts "Output #7: #{stations.count_trips_in_stop("A", "C", 4)}"
+puts "Output #6: #{stations.explore_trips_max_stops("C", "C", 3)}"
 #7.
-puts "Output #8: #{stations.dijkstra("A", "C")}"
+puts "Output #7: #{stations.explore_trips_exact_stops("A", "C", 4)}"
 #8.
-puts "Output #9: #{stations.shortest_route_to_same_station("B")}"
+puts "Output #8: #{stations.dijkstra("A", "C")}"
 #9. The length of the shortest route (distance to travel) from B to B.
+puts "Output #9: #{stations.shortest_route_to_same_station("B")}"
+#10.
 puts "Output #10: #{stations.explore_trips_max_length("C", "C", 30)}"
-#10. FIXME: not aligned
-
-# FIXME: IMPORTANT, your output is incorrect. This command:
-#
-#     $ diff -s output.txt <(ruby problem1.rb < input.txt)
-#
-# should say that files are identical.
