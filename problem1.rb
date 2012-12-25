@@ -7,81 +7,52 @@ class TrainStations
     # FIXME: you can use the ||= operator instead
     # (http://www.rubyinside.com/what-rubys-double-pipe-or-equals-really-does-5488.html)
     @routes[src] = {} if @routes[src].nil?
-    @routes[dst] = {}if @routes[dst].nil? # FIXME: space before if
+    @routes[dst] = {} if @routes[dst].nil?
     @routes[src][dst] = dist 
   end
 
-  def distance(x,y) # FIXME: space after ,
-    # FIXME: what is this for? why would anyone run this with x or y = nil?
-    # FIXME: x and y are meaningless names
-    return nil if x.nil? || y.nil?
-    if !@routes.has_key?(x)
-      return nil
-    elsif @routes[x][y].nil? # FIXME: I don't think this is necessary
-      return nil
-    else
-      return @routes[x][y]
-    end
+
+  def distance(src, dst)
+    return nil unless @routes.has_key?(src)
+    @routes[src][dst]
   end
 
-  # FIXME: Ruby convention for naming is under_score, not camelCase
-  def calcDist(a) # FIXME: a is a meaningless name
-    i = 0 
-    total = 0 
-    dist = 0 # FIXME: this seems unnecessary
-    # FIXME: use an iterator instead, e.g. 0.upto(a.length-1) do |i| ... end
-    while i < a.length-1
-      dist = distance a[i], a[i+1]
-      i+=1
-      if dist.nil?
-        # FIXME: inconsistent return (only case when not returning an integer),
-        # return nil instead or even better, raise an exception and catch it later
-        return "NO SUCH ROUTE"
-      # FIXME: no need for else when doing return
-      else
-        total += dist
-      end      
+
+  def calc_Dist(path)
+    total = 0
+    0.upto(path.length-2) do |i|
+      dist = distance(path[i], path[i+1])
+      return "NO SUCH ROUTE"  if dist.nil?
+      total += dist
     end
-    # FIXME: no need for return when in last statement
-    return total
+    total
   end
 
-  # FIXME: naming convention (nobody who knows Ruby well uses camelCase)
-  def exploreTripsMaxStops(node, destination, count) # FIXME: decide if you use src and dst or other names
+
+  def explore_trips_max_stops(src, dst, stops)
     trips = 0
-    if count > 0
-      trips += 1 if node == destination 
-      @routes[node].each do |n, v|
-        trips += exploreTripsMaxStops(n, destination, count-1)
+    if stops > 0
+      trips += 1 if src == dst 
+      @routes[src].each do |n, v|
+        trips += explore_trips_max_stops(n, dst, stops-1)
       end
     end
     trips
   end
 
-  # FIXME: naming convention
-  def exploreTripsMaxLength(node, destination, count) # FIXME: decide if you use src and dst or other names
-    trips = 0
-    @routes[node].each do |n, v|
-      if v < count
-        trips += 1 if n == destination
-        trips += exploreTripsMaxLength(n, destination, count-v)
-      end
-    end
-    trips
-  end
 
-  # FIXME: naming convention
-  def countTripsInStop(node, destination, count) # FIXME: decide if you use src and dst or other names
-    if count === 0      
-      return 1 if node == destination 
+  def count_trips_in_stop(src, dst, stops)
+    if stops === 0      
+      return 1 if src == dst 
       return 0
     end
     trips = 0
-    @routes[node].each do |n, v|
-      trips += countTripsInStop(n, destination, count-1)
+    @routes[src].each do |n, v|
+      trips += count_trips_in_stop(n, dst, stops-1)
     end
     trips
   end
+
 
   def dijkstra(src, dst = nil)
     distances = {}
@@ -111,14 +82,26 @@ class TrainStations
     distances
   end
 
-  # FIXME: naming convention
-  def shortestRouteToSameStation(origin) # FIXME: decide, origin or src
+
+  def shortest_route_to_same_station(origin)
     shortRoute = dijkstra(origin)
     shortRoute.each do |n, v| 
       shortRoute[n] += dijkstra(n, origin) unless v.nil?
       shortRoute.delete(n) if n == origin || v.nil?
     end
     return shortRoute.values.min
+  end
+
+
+  def explore_trips_max_length(src, dst, length)
+    trips = 0
+    @routes[src].each do |n, v|
+      if v < length
+        trips += 1 if n == dst
+        trips += explore_trips_max_length(n, dst, length-v)
+      end
+    end
+    trips
   end
 
 end
@@ -134,16 +117,26 @@ input.each do |route|
 end
 
 ###   OUTPUT  ### FIXME: this comment looks ugly ;)
-puts "Output #1", stations.calcDist(["A","B","C"])           #1. The distance of the route A­B­C.
-puts "Output #2", stations.calcDist(["A","D"])               #2. The distance of the route A­D.
-puts "Output #3", stations.calcDist(["A","D","C"])           #3. The distance of the route A­D­C.
-puts "Output #4", stations.calcDist(["A","E", "B","C", "D"]) #4. The distance of the route A­E­B­C­D. 
-puts "Output #5", stations.calcDist(["A","E","D"])           #5. The distance of the route A­E­D.
-puts "Output #6", stations.exploreTripsMaxStops("C", "C", 3) #6.
-puts "Output #7", stations.countTripsInStop("A", "C", 4)     #7.
-puts "Output #8", stations.dijkstra("A", "C")                #8.
-puts "Output #9", stations.shortestRouteToSameStation("B")   #9. The length of the shortest route (in terms of distance to travel) from B to B.
-puts "Output #10", stations.exploreTripsMaxLength("C", "C", 30) #10. FIXME: not aligned
+puts "Output #1: #{stations.calc_Dist(["A", "B", "C"])}"
+#1. The distance of the route A­B­C.
+puts "Output #2: #{stations.calc_Dist(["A", "D"])}"
+#2. The distance of the route A­D.
+puts "Output #3: #{stations.calc_Dist(["A", "D", "C"])}"         
+#3. The distance of the route A­D­C.
+puts "Output #4: #{stations.calc_Dist(["A", "E", "B", "C", "D"])}"
+#4. The distance of the route A­E­B­C­D. 
+puts "Output #5: #{stations.calc_Dist(["A", "E", "D"])}"      
+#5. The distance of the route A­E­D.
+puts "Output #6: #{stations.explore_trips_max_stops("C", "C", 3)}"
+#6.
+puts "Output #7: #{stations.count_trips_in_stop("A", "C", 4)}"
+#7.
+puts "Output #8: #{stations.dijkstra("A", "C")}"
+#8.
+puts "Output #9: #{stations.shortest_route_to_same_station("B")}"
+#9. The length of the shortest route (distance to travel) from B to B.
+puts "Output #10: #{stations.explore_trips_max_length("C", "C", 30)}"
+#10. FIXME: not aligned
 
 # FIXME: IMPORTANT, your output is incorrect. This command:
 #
