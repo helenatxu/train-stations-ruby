@@ -125,13 +125,13 @@ puts "Output #3: #{stations.calc_dist(["A", "D", "C"])}"
 puts "Output #4: #{stations.calc_dist(["A", "E", "B", "C", "D"])}"
 #5. The distance of the route A­E­D.
 puts "Output #5: #{stations.calc_dist(["A", "E", "D"])}"      
-#6.
+#6. The number of trips starting at C and ending at C with a maximum of 3 stops.
 puts "Output #6: #{stations.explore_trips_max_stops("C", "C", 3)}"
-#7.
+#7. The number of trips starting at A and ending at C with exactly 4 stops.  
 puts "Output #7: #{stations.explore_trips_exact_stops("A", "C", 4)}"
-#8.
+#8. The length of the shortest route (in terms of distance to travel) from A to C.
 puts "Output #8: #{stations.dijkstra("A", "C")}"
 #9. The length of the shortest route (distance to travel) from B to B.
 puts "Output #9: #{stations.shortest_route_to_same_station("B")}"
-#10.
+#10. The number of different routes from C to C with a distance of less than 30.
 puts "Output #10: #{stations.explore_trips_max_length("C", "C", 30)}"
